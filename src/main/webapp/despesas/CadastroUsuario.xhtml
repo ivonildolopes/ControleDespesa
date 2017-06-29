@@ -1,0 +1,89 @@
+<ui:composition template="/WEB-INF/template/LayoutPadrao.xhtml"
+	xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui" xmlns:o="http://omnifaces.org/ui">
+
+	<f:metadata>
+		<o:viewParam name="despesa" value="#{cadastroDespesaBean.despesa}" />
+		<f:event listener="#{cadastroDespesaBean.inicializar()}"
+			type="preRenderView" />
+	</f:metadata>
+
+	<ui:define name="titulo">Lancamento despesas</ui:define>
+
+	<ui:define name="corpo">
+
+		<h1>Nova Despesa</h1>
+
+		<h:form>
+			<p:messages autoUpdate="true" closable="true" />
+
+			<p:toolbar style="margin-top: 20px">
+				<p:toolbarGroup>
+					<p:button value="Novo" outcome="/despesas/CadastroUsuario" />
+					<p:commandButton value="Salvar" id="botaoSalvar"
+						action="#{cadastroDespesaBean.salvar()}" update="@form" />
+				</p:toolbarGroup>
+				<p:toolbarGroup align="right">
+					<p:button value="Pesquisa" outcome="/despesas/PesquisaUsuario" />
+				</p:toolbarGroup>
+			</p:toolbar>
+
+			<div class="ui-fluid">
+				<p:panelGrid columns="4"
+					columnClasses="ui-grid-col-2,ui-grid-col-10" layout="grid"
+					styleClass="ui-panelgrid-blank">
+
+					<p:outputLabel value="Data" for="data" />
+					<p:calendar id="data" pattern="dd/MM/yyyy" locale="pt"
+						value="#{cadastroDespesaBean.despesa.data}" />
+
+					<p:outputLabel value="Valor" for="valor" />
+					<p:inputText id="valor"
+						value="#{cadastroDespesaBean.despesa.valor}" />
+
+					<p:outputLabel value="Descricao" for="descricao" />
+					<p:inputText id="descricao"
+						value="#{cadastroDespesaBean.despesa.descricao}" />
+
+					<p:outputLabel value="Categoria" for="categoria" />
+					<p:inputText id="categoria"
+						value="#{cadastroDespesaBean.despesa.categoria}" />
+
+					<p:outputLabel value="Parcelado?" for="parcelado" />
+					<h:panelGroup id="campoDataParcela">
+						<p:selectBooleanCheckbox id="parcelado"
+							value="#{cadastroDespesaBean.despesa.parcelado}">
+							<p:ajax event="change" process="@this"
+								listener="#{cadastroDespesaBean.mostraCampo()}"
+								update="qtd, lqtd, campoDataParcela" />
+						</p:selectBooleanCheckbox>
+
+						<p:selectOneMenu id="cartao" converter="cartaoConverter" 
+						   value="#{cadastroDespesaBean.despesa.cartao}"
+							 effect="fade" filter="true"
+							rendered="#{cadastroDespesaBean.mostraCampo()}">
+							<f:selectItems value="#{cadastroDespesaBean.listaCartao}"
+								var="cartao" itemValue="#{cartao}" itemLabel="#{cartao.toString()}" />
+						</p:selectOneMenu>
+					</h:panelGroup>
+
+					<h:panelGroup id="lqtd">
+						<p:outputLabel value="Qtd Parcelas" for="qtd"
+							rendered="#{cadastroDespesaBean.mostraCampo()}" />
+					</h:panelGroup>
+					<h:panelGrid id="qtd">
+						<p:inputText rendered="#{cadastroDespesaBean.mostraCampo()}"
+							value="#{cadastroDespesaBean.despesa.quantidadeParcela}" />
+					</h:panelGrid>
+				</p:panelGrid>
+			</div>
+
+		</h:form>
+
+
+
+	</ui:define>
+</ui:composition>
